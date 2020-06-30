@@ -1,13 +1,17 @@
 package com.codepath.apps.restclienttemplate.models;
 
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class Tweet {
 
@@ -43,4 +47,5 @@ public class Tweet {
     public User getUser() {
         return user;
     }
+
 }

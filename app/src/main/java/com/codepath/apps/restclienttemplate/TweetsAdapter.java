@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +42,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
     @Override
     public int getItemCount() {
-        return 0;
+        return tweets.size();
     }
 
     //pass in context and list of tweets
@@ -63,6 +64,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
 
         public void bind(Tweet tweet) {
             tvBody.setText(tweet.getBody());
+            Log.d("Debug","adapter binding");
             User user = tweet.getUser();
             tvScreenName.setText(user.getName());
             Glide.with(context).load(user.getProfileImageUrl()).into(ivProfileImage);

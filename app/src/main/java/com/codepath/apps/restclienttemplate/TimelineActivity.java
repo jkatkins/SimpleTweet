@@ -10,6 +10,9 @@ import android.util.Log;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +34,7 @@ public class TimelineActivity extends AppCompatActivity {
 
         client = TwitterApplication.getRestClient(this);
         rvTweets = findViewById(R.id.rvTweets);
-        tweets = new ArrayList<Tweet>();
+        tweets = new ArrayList<>();
         adapter = new TweetsAdapter(this,tweets);
 
         rvTweets.setLayoutManager(new LinearLayoutManager(this));
@@ -44,7 +47,15 @@ public class TimelineActivity extends AppCompatActivity {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                Log.i(TAG,"onsuccess!");
+                JSONArray jsonArray = json.jsonArray;
+                Log.i(TAG,"On success!");
+                try {
+                    tweets.addAll(Tweet.fromJsonArray(jsonArray));
+                    adapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    Log.e(TAG,"json exception",e);
+                    e.printStackTrace();
+                }
             }
 
             @Override

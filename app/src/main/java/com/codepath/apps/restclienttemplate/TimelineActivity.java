@@ -26,7 +26,7 @@ import java.util.List;
 
 import okhttp3.Headers;
 
-public class TimelineActivity extends AppCompatActivity {
+public class TimelineActivity extends AppCompatActivity implements ComposeActivityFragment.ComposeListener {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main,menu);
@@ -50,6 +50,13 @@ public class TimelineActivity extends AppCompatActivity {
         FragmentManager fm = getSupportFragmentManager();
         ComposeActivityFragment composeActivityFragment = ComposeActivityFragment.newInstance(this,"Some Title");
         composeActivityFragment.show(fm, "fragment_edit_name");
+    }
+
+    public void addTweet(Tweet tweet) {
+            tweets.add(0,tweet);
+            adapter.notifyItemInserted(0);
+            rvTweets.smoothScrollToPosition(0);
+            Log.i(TAG,"add tweet is called");
     }
 
     @Override

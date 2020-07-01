@@ -92,10 +92,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvName.setText(user.getName());
             rvRelativeDate.setText(getRelativeTimeAgo(tweet.getCreatedAt()));
             Glide.with(context).load(user.getProfileImageUrl()).into(ivProfileImage);
-            String mediaUrl = tweet.getMediaUrl();
-            if (!mediaUrl.equals("")){
-                Glide.with(context).load(mediaUrl).into(ivMedia);
-            }
+            Glide.with(context).load(tweet.getMediaUrl()).into(ivMedia);
         }
 
         public String getRelativeTimeAgo(String rawJsonDate) {

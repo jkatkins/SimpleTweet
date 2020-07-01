@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
@@ -32,6 +33,10 @@ public class ComposeActivityFragment extends DialogFragment {
     Context context;
 
     TwitterClient client;
+
+    public interface ComposeListener {
+        void addTweet(Tweet tweet);
+    }
 
     public ComposeActivityFragment() {
         // Empty constructor is required for DialogFragment
@@ -80,9 +85,13 @@ public class ComposeActivityFragment extends DialogFragment {
                         Log.i(TAG,"On success to publish tweet");
                         try {
                             Tweet tweet = Tweet.fromJson(json.jsonObject);
+                            ComposeListener listener = (ComposeListener) getActivity();
+                            listener.addTweet(tweet);
                             Log.i(TAG,"published tweet with content: " + tweet);
-                            Intent i = new Intent();
-                            i.putExtra("tweet", Parcels.wrap(tweet));
+                            dismiss();
+                            //Intent i = new Intent();
+                            //i.putExtra("tweet", Parcels.wrap(tweet));
+                            //getActivity().finish();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -99,11 +108,5 @@ public class ComposeActivityFragment extends DialogFragment {
 
 
         // Fetch arguments from bundle and set title
-        String title = getArguments().getString("title", "Enter Name");
-        getDialog().setTitle(title);
-        // Show soft keyboard automatically and request focus to field
-        //etCompose.requestFocus();
-        getDialog().getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 }

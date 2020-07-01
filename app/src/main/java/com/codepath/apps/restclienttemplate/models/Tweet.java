@@ -3,6 +3,8 @@ package com.codepath.apps.restclienttemplate.models;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import com.bumptech.glide.load.model.stream.QMediaStoreUriLoader;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,14 +36,14 @@ public class Tweet {
         tweet.body = jsonObject.getString("text");
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
-        tweet.mediaUrl = "";
         tweet.id = jsonObject.getLong("id");
         JSONObject entities = jsonObject.getJSONObject("entities");
         if (entities.has("media")) {
             JSONArray media = entities.getJSONArray("media");
             tweet.mediaUrl = media.getJSONObject(0).getString("media_url_https");
+        } else {
+            tweet.mediaUrl = "";
         }
-        Log.i("Debug","url: " + tweet.mediaUrl);
         return tweet;
     }
 

@@ -2,6 +2,7 @@ package com.codepath.apps.restclienttemplate;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -38,10 +39,17 @@ public class TimelineActivity extends AppCompatActivity {
             //compose was tapped
             Toast.makeText(this, "compose", Toast.LENGTH_SHORT).show();
             Intent i = new Intent(this,ComposeActivity.class);
-            startActivityForResult(i,REQUEST_CODE);
+            //startActivityForResult(i,REQUEST_CODE);
+            showEditDialog();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showEditDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        ComposeActivityFragment composeActivityFragment = ComposeActivityFragment.newInstance(this,"Some Title");
+        composeActivityFragment.show(fm, "fragment_edit_name");
     }
 
     @Override

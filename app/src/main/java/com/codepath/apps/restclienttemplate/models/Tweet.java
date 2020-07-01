@@ -37,10 +37,6 @@ public class Tweet {
         tweet.mediaUrl = "";
         tweet.id = jsonObject.getLong("id");
         JSONObject entities = jsonObject.getJSONObject("entities");
-        if (jsonObject.has("extended_entities")) {
-            entities = jsonObject.getJSONObject("extended_entities");
-            Log.i("Debug","extended exists!" + tweet.mediaUrl);
-        }
         if (entities.has("media")) {
             JSONArray media = entities.getJSONArray("media");
             tweet.mediaUrl = media.getJSONObject(0).getString("media_url_https");

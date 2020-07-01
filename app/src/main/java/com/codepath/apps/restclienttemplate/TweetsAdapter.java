@@ -92,6 +92,8 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvName.setText(user.getName());
             rvRelativeDate.setText(getRelativeTimeAgo(tweet.getCreatedAt()));
             Glide.with(context).load(user.getProfileImageUrl()).into(ivProfileImage);
+            if (ivMedia.equals("")) {return;}
+            Log.i("mediaurl",tweet.getMediaUrl());
             Glide.with(context).load(tweet.getMediaUrl()).into(ivMedia);
         }
 

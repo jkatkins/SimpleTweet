@@ -33,6 +33,32 @@ public class TimelineActivity extends AppCompatActivity implements ComposeActivi
         return true;
     }
 
+    Boolean initialLoad = true;
+    Boolean progressBarLoaded = false;
+    MenuItem miActionProgressItem;
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // Store instance of the menu item containing progress
+        miActionProgressItem = menu.findItem(R.id.miActionProgress);
+        progressBarLoaded = true;
+        if (initialLoad) {
+            showProgressBar();
+        }
+
+        // Return to finish
+        return super.onPrepareOptionsMenu(menu);
+    }
+    public void showProgressBar() {
+        // Show progress item
+        miActionProgressItem.setVisible(true);
+    }
+
+    public void hideProgressBar() {
+        // Hide progress item
+        miActionProgressItem.setVisible(false);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.compose) {
@@ -124,9 +150,11 @@ public class TimelineActivity extends AppCompatActivity implements ComposeActivi
         //  --> Deserialize and construct new model objects from the API response
         //  --> Append the new data objects to the existing set of items inside the array of items
         //  --> Notify the adapter of the new items made with `notifyItemRangeInserted()`
+        showProgressBar();
         client.getNextPageOfTweets(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
+                hideProgressBar();
                 Log.i(TAG,"On success for load more");
                 JSONArray jsonArray = json.jsonArray;
                 try {
@@ -144,15 +172,21 @@ public class TimelineActivity extends AppCompatActivity implements ComposeActivi
     }
 
     private void populateHomeTimeline() {
+        initialLoad = true;
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
+                initialLoad = false;
+                if (progressBarLoaded) {
+                    hideProgressBar();
+                }
                 JSONArray jsonArray = json.jsonArray;
                 Log.i(TAG,"On success!");
                 try {
                     adapter.clear();
                     adapter.addAll(Tweet.fromJsonArray(jsonArray));
                     swipeContainer.setRefreshing(false);
+                    scrollListener.resetState();
                 } catch (JSONException e) {
                     Log.e(TAG,"json exception",e);
                     e.printStackTrace();

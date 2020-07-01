@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -72,6 +73,7 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         TextView tvName;
         TextView rvRelativeDate;
         ImageView ivMedia;
+        ImageButton btnReply;
 
 
         public ViewHolder(@NonNull View itemView) {
@@ -82,19 +84,27 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
             tvName = itemView.findViewById(R.id.tvName);
             rvRelativeDate = itemView.findViewById(R.id.tvRelativeDate);
             ivMedia = itemView.findViewById(R.id.ivMedia);
+            btnReply = itemView.findViewById(R.id.btnReply);
         }
 
         public void bind(Tweet tweet) {
             tvBody.setText(tweet.getBody());
             Log.d("Debug","adapter binding");
             User user = tweet.getUser();
-            tvScreenName.setText("@" + user.getScreenName());
+            final String screenName = user.getScreenName();
+            tvScreenName.setText("@" + screenName);
             tvName.setText(user.getName());
             rvRelativeDate.setText(getRelativeTimeAgo(tweet.getCreatedAt()));
             Glide.with(context).load(user.getProfileImageUrl()).into(ivProfileImage);
             if (ivMedia.equals("")) {return;}
             Log.i("mediaurl",tweet.getMediaUrl());
             Glide.with(context).load(tweet.getMediaUrl()).into(ivMedia);
+            btnReply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ((TimelineActivity)context).replyEditDialog(screenName);
+                }
+            });
         }
 
         public String getRelativeTimeAgo(String rawJsonDate) {

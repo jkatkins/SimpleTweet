@@ -9,10 +9,12 @@
         android:id="@+id/vBorder"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@+id/ivMedia"
+        android:layout_below="@+id/btnReply"
         android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="9dp"
         android:background="@android:color/black" />
 
     <TextView
@@ -61,11 +63,13 @@
 
     <ImageView
         android:id="@+id/ivMedia"
-        android:layout_width="285dp"
+        android:layout_width="318dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvBody"
         android:layout_marginStart="2dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="14dp"
+        android:layout_toStartOf="@+id/tvRelativeDate"
         android:layout_toEndOf="@+id/ivProfileImage"
         tools:srcCompat="@tools:sample/avatars" />
 
@@ -77,4 +81,14 @@
         android:layout_alignParentTop="true"
         android:textSize="18sp"
         tools:text="Name" />
+
+    <ImageButton
+        android:id="@+id/btnReply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ivMedia"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="2dp"
+        app:srcCompat="@android:drawable/ic_menu_revert" />
 </RelativeLayout>

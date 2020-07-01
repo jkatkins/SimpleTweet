@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
@@ -63,8 +64,6 @@ public class TimelineActivity extends AppCompatActivity implements ComposeActivi
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.compose) {
             //compose was tapped
-            Toast.makeText(this, "compose", Toast.LENGTH_SHORT).show();
-            Intent i = new Intent(this,ComposeActivity.class);
             //startActivityForResult(i,REQUEST_CODE);
             showEditDialog();
             return true;
@@ -72,9 +71,15 @@ public class TimelineActivity extends AppCompatActivity implements ComposeActivi
         return super.onOptionsItemSelected(item);
     }
 
-    private void showEditDialog() {
+    public void showEditDialog() {
         FragmentManager fm = getSupportFragmentManager();
-        ComposeActivityFragment composeActivityFragment = ComposeActivityFragment.newInstance(this,"Some Title");
+        ComposeActivityFragment composeActivityFragment = ComposeActivityFragment.newInstance(this,"Some Title","");
+        composeActivityFragment.show(fm, "fragment_edit_name");
+    }
+
+    public void replyEditDialog(String username) {
+        FragmentManager fm = getSupportFragmentManager();
+        ComposeActivityFragment composeActivityFragment = ComposeActivityFragment.newInstance(this,"Some Title",username);
         composeActivityFragment.show(fm, "fragment_edit_name");
     }
 

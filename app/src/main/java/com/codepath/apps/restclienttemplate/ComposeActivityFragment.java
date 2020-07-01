@@ -31,6 +31,7 @@ public class ComposeActivityFragment extends DialogFragment {
     EditText etCompose;
     Button btnTweet;
     Context context;
+    String username;
 
     TwitterClient client;
 
@@ -44,12 +45,13 @@ public class ComposeActivityFragment extends DialogFragment {
         // Use `newInstance` instead as shown below
     }
 
-    public static ComposeActivityFragment newInstance(Context context, String title) {
+    public static ComposeActivityFragment newInstance(Context context, String title,String username) {
         ComposeActivityFragment frag = new ComposeActivityFragment();
         Bundle args = new Bundle();
         args.putString("title", title);
         frag.setArguments(args);
         frag.context = context;
+        frag.username = username;
         return frag;
     }
 
@@ -66,6 +68,10 @@ public class ComposeActivityFragment extends DialogFragment {
         etCompose = view.findViewById(R.id.etCompose);
         btnTweet = view.findViewById(R.id.btnTweet);
         client = TwitterApplication.getRestClient(context);
+        if (username.equals("") == false) {
+            etCompose.setText("@" + username + " ");
+        }
+        etCompose.requestFocus();
         btnTweet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

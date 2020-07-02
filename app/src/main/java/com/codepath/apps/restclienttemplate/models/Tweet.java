@@ -3,6 +3,12 @@ package com.codepath.apps.restclienttemplate.models;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import com.bumptech.glide.load.model.stream.QMediaStoreUriLoader;
 
 import org.json.JSONArray;
@@ -16,14 +22,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+@Entity(foreignKeys = @ForeignKey(entity=User.class, parentColumns="id", childColumns="userID"))
 @Parcel
 public class Tweet {
 
-    String body;
-    String createdAt;
-    long id;
-    User user;
-    String mediaUrl;
+    @ColumnInfo
+    public String body;
+
+    @ColumnInfo
+    public String createdAt;
+
+    @PrimaryKey
+    @ColumnInfo
+    public long id;
+
+    @ColumnInfo
+    public long userID;
+
+    @Ignore
+    public User user;
+
+    @ColumnInfo
+    public String mediaUrl;
 
     public Tweet () {}
 
@@ -37,6 +57,7 @@ public class Tweet {
         tweet.createdAt = jsonObject.getString("created_at");
         tweet.user = User.fromJson(jsonObject.getJSONObject("user"));
         tweet.id = jsonObject.getLong("id");
+        tweet.userID = tweet.user.getId();
         JSONObject entities = jsonObject.getJSONObject("entities");
         if (entities.has("media")) {
             JSONArray media = entities.getJSONArray("media");

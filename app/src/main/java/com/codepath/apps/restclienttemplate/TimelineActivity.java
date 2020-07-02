@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -16,6 +17,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.models.TweetDao;
+import com.codepath.apps.restclienttemplate.models.TweetWithUser;
+import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -43,7 +47,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeActivi
         // Store instance of the menu item containing progress
         miActionProgressItem = menu.findItem(R.id.miActionProgress);
         progressBarLoaded = true;
-        if (initialLoad) {
+        if (progressBarLoaded) {
             showProgressBar();
         }
 
@@ -105,6 +109,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeActivi
     public static final String TAG = "TimelineActivity";
     public final int REQUEST_CODE = 20;
 
+    TweetDao tweetDao;
     TwitterClient client;
     RecyclerView rvTweets;
     List<Tweet> tweets;
@@ -116,6 +121,9 @@ public class TimelineActivity extends AppCompatActivity implements ComposeActivi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
+
+        tweetDao = ((TwitterApplication) getApplicationContext()).getMyDatabase().tweetDao();
+
 
         client = TwitterApplication.getRestClient(this);
         rvTweets = findViewById(R.id.rvTweets);
@@ -146,6 +154,19 @@ public class TimelineActivity extends AppCompatActivity implements ComposeActivi
         };
         rvTweets.addOnScrollListener(scrollListener);
 
+        //Query for existing tweets in database
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                Log.i(TAG,"Showing data from database");
+                List<TweetWithUser> tweetWithUsers = tweetDao.recentItems();
+                List<Tweet> tweetsFromDB = TweetWithUser.getTweetList(tweetWithUsers);
+                adapter.clear();
+                adapter.addAll(tweetsFromDB);
+            }
+        });
+
+
         populateHomeTimeline();
     }
 
@@ -155,11 +176,15 @@ public class TimelineActivity extends AppCompatActivity implements ComposeActivi
         //  --> Deserialize and construct new model objects from the API response
         //  --> Append the new data objects to the existing set of items inside the array of items
         //  --> Notify the adapter of the new items made with `notifyItemRangeInserted()`
-        showProgressBar();
+        if (progressBarLoaded) {
+            showProgressBar();
+        }
         client.getNextPageOfTweets(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Headers headers, JSON json) {
-                hideProgressBar();
+                if (initialLoad) {
+                    hideProgressBar();
+                }
                 Log.i(TAG,"On success for load more");
                 JSONArray jsonArray = json.jsonArray;
                 try {
@@ -189,9 +214,20 @@ public class TimelineActivity extends AppCompatActivity implements ComposeActivi
                 Log.i(TAG,"On success!");
                 try {
                     adapter.clear();
-                    adapter.addAll(Tweet.fromJsonArray(jsonArray));
+                    final List<Tweet> tweetsFromNetwork = Tweet.fromJsonArray(jsonArray);
+                    adapter.addAll(tweetsFromNetwork);
                     swipeContainer.setRefreshing(false);
                     scrollListener.resetState();
+                    AsyncTask.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.i(TAG,"Saving data to database");
+                            //insert users first, then insert tweets
+                            List<User> usersFromNetwork = User.fromJsonTweetArray(tweetsFromNetwork);
+                            tweetDao.insertModel(usersFromNetwork.toArray(new User[0]));
+                            tweetDao.insertModel(tweetsFromNetwork.toArray(new Tweet[0]));
+                        }
+                    });
                 } catch (JSONException e) {
                     Log.e(TAG,"json exception",e);
                     e.printStackTrace();

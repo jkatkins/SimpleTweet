@@ -48,6 +48,8 @@ The following **additional** features are implemented:
 Here's a walkthrough of implemented user stories:
 
 https://recordit.co/nCzLQ5rdiY
+https://imgur.com/a/3V5oWGn
+
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
